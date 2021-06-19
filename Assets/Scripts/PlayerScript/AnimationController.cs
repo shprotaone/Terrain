@@ -29,7 +29,6 @@ public class AnimationController : MonoBehaviour
         if (playerController.Jump)
         {            
             animator.SetTrigger("Jump");
-            print("PropJump");
         }
 
         if (playerController.Walk)
