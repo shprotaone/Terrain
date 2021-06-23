@@ -7,53 +7,51 @@ public class BotController  : MonoBehaviour
 {
     NavMeshAgent agent;
     [SerializeField]
-    GameObject [] target;
-    [SerializeField]
-    NavMeshModifierVolume navMeshVolume;
-    public bool finish;
-    int index = 0;
+    GameObject target;
+    RandomPointNavMesh randomPointScript;
+
+    bool nextTarget = false;
+    bool isMoving;
 
     void Start()
     {
-        agent = GetComponent<NavMeshAgent>();          
+        agent = GetComponent<NavMeshAgent>();
+        agent.destination = target.transform.position;
+        randomPointScript = target.GetComponentInParent<RandomPointNavMesh>();
+        StartCoroutine(Movement());
     }
-
-    private void Update()
+    void Update()
     {
-        CheckFinish();
+        agent.destination = target.transform.position;
+        //print(agent.remainingDistance);
     }
 
-    void NextTarget()
-    {           
-            index = Random.Range(0, target.Length);
-            agent.destination = target[index].transform.position;
-
-        //print("Next Target");
-    }
-
-    void CheckFinish()
+    void NextPoint()
     {
-        if (agent.remainingDistance <= 0.1)
+        print("NextTarget");
+        nextTarget = true;
+        randomPointScript.ChangePointPos(nextTarget);
+        nextTarget = false;
+    }
+
+    IEnumerator Movement()
+    {
+        isMoving = true;
+
+        while (isMoving)
         {
-            finish = true;
-            NextTarget();
-            ChangeTarget();
+            if (agent.remainingDistance < 0.1)
+            {
+                //print("Agent pos: " + agent.transform.position);
+                //print("Target pos: " + target.transform.position);
+                Debug.LogError("Im Found!");
+                yield return new WaitForSeconds(5f);
+                NextPoint();
+            }
+            else Debug.Log("So Far");
+
+            yield return null;
         }
-    }
-
-    void ChangeTarget()
-    {
-        navMeshVolume = target[index].GetComponentInParent<NavMeshModifierVolume>();
-        print(navMeshVolume.name);
-
-        float x = Random.Range(0, navMeshVolume.size.x);
-        float z = Random.Range(0, navMeshVolume.size.y);
-
-        if (finish)
-        {
-            target[index].transform.localPosition = new Vector3(x, 0, z);
-            //print("Next target position " + target[index].transform.localPosition);
-        }            
     }
 
 }

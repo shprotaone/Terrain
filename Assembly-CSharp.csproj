@@ -84,6 +84,8 @@
     <Compile Include="Assets\Scripts\PlayerScript\AnimationController.cs" />
     <Compile Include="Assets\Scripts\PlayerScript\CharacterPlay.cs" />
     <Compile Include="Assets\Scripts\PlayerScript\PlayerController.cs" />
+    <Compile Include="Assets\Scripts\RandomPointNavMesh.cs" />
+    <Compile Include="Assets\Scripts\SecurityController.cs" />
     <Compile Include="Assets\Scripts\TaskFolder\Task.cs" />
     <Compile Include="Assets\Scripts\TaskFolder\TaskDisplay.cs" />
     <Compile Include="Assets\Scripts\Test.cs" />
@@ -94,7 +96,6 @@
     <Compile Include="Assets\Scripts\Timelines\SaloonPlay.cs" />
     <Compile Include="Assets\Scripts\Timelines\StartTimeline.cs" />
     <Compile Include="Assets\Scripts\Timelines\infoZone.cs" />
-    <Compile Include="Assets\Scripts\VisitorController.cs" />
     <None Include="Assets\TextMesh Pro\Shaders\TMPro.cginc" />
     <None Include="Assets\TextMesh Pro\Shaders\TMP_SDF-Mobile Overlay.shader" />
     <None Include="Assets\TextMesh Pro\Shaders\TMP_Bitmap.shader" />

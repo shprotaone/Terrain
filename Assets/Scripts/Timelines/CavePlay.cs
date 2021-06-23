@@ -10,18 +10,27 @@ public class CavePlay : MonoBehaviour
     public GameObject greenCore;
     public GameObject mainCamera;
     public GameObject door;
+    
+    PlayerController playerController;
+    CharacterController characterController;
+    AnimationController animationController;
 
     PlayableDirector playable;
-    PlayerController playerController;
     DialogTrigger dialogTrigger;
     Animation doorOpen;
     Task task;
+
+    [SerializeField]
+    GameObject playerTalkPosition;
 
     bool paused = false;
     bool isOpened = false;
     private void Start()
     {
         playerController = player.GetComponent<PlayerController>();
+        characterController = player.GetComponent<CharacterController>();
+        animationController = player.GetComponent<AnimationController>();
+
         doorOpen = door.GetComponent<Animation>();
         playable = GetComponent<PlayableDirector>();
         dialogTrigger = GetComponentInChildren<DialogTrigger>();
@@ -55,13 +64,17 @@ public class CavePlay : MonoBehaviour
     public void Resume()
     {
         playable.playableGraph.GetRootPlayable(0).SetSpeed(1);
+        TalkPosition();
         playerController.enabled = false;
-        paused = false;
-      
+        characterController.enabled = false;
+        animationController.enabled = false;
+        paused = false;          
     }
     public void ReturnControl()
     {
         playerController.enabled = true;
+        characterController.enabled = true;
+        animationController.enabled = true;
     }
 
     public void CreatePortal()
@@ -73,5 +86,11 @@ public class CavePlay : MonoBehaviour
     {
         dialogTrigger.TriggerDialogue();
         task.isActive = true;
+    }
+
+    void TalkPosition()
+    {
+        player.transform.position = playerTalkPosition.transform.position;
+        player.transform.LookAt(ksardas.transform.position);
     }
 }

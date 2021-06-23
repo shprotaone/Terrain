@@ -34,14 +34,14 @@ public class PlayerController : MonoBehaviour
     {
         Movement();
         JumpMeth();
-        StandUpMeth();
+        StandUpMeth();       
     }
   
     void JumpMeth()
     {
         Vector3 jumpDirection = new Vector3(0, 0, 0);
 
-        if (Input.GetKeyDown(KeyCode.Space))
+        if (Input.GetKeyDown(KeyCode.Space)&&controller.isGrounded)
         {
             directionY = jumpSpeed;
             jump = true;
