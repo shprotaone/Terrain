@@ -5,48 +5,72 @@ using UnityEngine.AI;
 
 public class SecurityController : MonoBehaviour
 {
-    NavMeshAgent securityAgent;
-    [SerializeField]
-    GameObject [] targets;
+    [SerializeField] private List<GameObject> visitors;
+    [SerializeField] private GameObject currentVisitor;
 
-    bool finish;
-    int index;
+    private NavMeshAgent securityAgent; 
+    
+    private int index;
+    private bool visitorStopped = false;
+    private bool cheked = false;
 
-    void Start()
+    private void Start()
     {
         securityAgent = GetComponent<NavMeshAgent>();
-        targets = GameObject.FindGameObjectsWithTag("Visitor");
+
+        visitors = new List<GameObject>();
+        visitors.AddRange(GameObject.FindGameObjectsWithTag("Visitor"));
+
         NextTarget();
+        StartCoroutine(CheckVisitor());
     }
     private void Update()
     {
-        RefreshPosition();
-        CheckFinish();
+        Debug.DrawLine(securityAgent.transform.position, visitors[index].transform.position);
+        print("Visitor Stopped " + visitorStopped);
     }
 
-    int NextTarget()
+    private IEnumerator CheckVisitor()
     {
-        index = Random.Range(0, targets.Length);
-        print("Target number Change");
-        return index;
-        
-    }
-    //НАДО НАЙТИ КАК ОБНОВЛЯТЬ ПОЗИЦИЮ
-    void CheckFinish()
-    {
-        if (securityAgent.remainingDistance < 0.9f)
-        {
-            finish = true;
-            print("NextTarget");
-            NextTarget();
+        while (true)
+        {           
+            if (securityAgent.remainingDistance < 0.8f)
+            {
+                NextTarget();                
+            }
+            securityAgent.SetDestination(visitors[index].transform.position);
+            
+            yield return null;
         }
     }
-    void RefreshPosition()
-    {        
-        securityAgent.destination = targets[index].transform.position;
-        //if (!finish)
-        //{
-        //    currentPosition = targets[index].transform.position;
-        //}
+    /// <summary>
+    /// Генерация номера следующего моба
+    /// </summary>
+    /// <returns></returns>
+    private int NextTarget()
+    {
+        index = Random.Range(0, visitors.Count);
+        return index;
+    }
+    /// <summary>
+    /// Попытка остановить при касании
+    /// </summary>
+    /// <param name="collision"></param>
+    private void OnCollisionEnter(Collision collision)
+    {
+        if (collision.collider && !cheked)
+        {
+            currentVisitor = collision.gameObject;
+            BotController botController;
+
+            if(currentVisitor != null)
+            {
+                print(collision.collider.name);
+                botController = currentVisitor.GetComponent<BotController>();
+                botController.Stopped = true;
+                cheked = true;                
+            }
+            visitors.RemoveAt(index);
+        }
     }
 }

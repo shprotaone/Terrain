@@ -5,52 +5,69 @@ using UnityEngine.AI;
 
 public class BotController  : MonoBehaviour
 {
-    NavMeshAgent agent;
-    [SerializeField]
-    GameObject target;
-    RandomPointNavMesh randomPointScript;
+    [SerializeField] private GameObject target;
+    [SerializeField] private GameObject localTarget;
+    private NavMeshAgent agent;    
+    private RandomPointNavMesh randomPointScript;
 
-    bool nextTarget = false;
-    bool isMoving;
+    private bool nextTarget = false;
+    [SerializeField] private bool isStopped = false;
 
-    void Start()
+    public bool Stopped
+    {
+        get
+        {
+            return isStopped;
+        }
+        set
+        {
+            isStopped = value;          
+        }
+    }    
+
+    private void Start()
     {
         agent = GetComponent<NavMeshAgent>();
-        agent.destination = target.transform.position;
         randomPointScript = target.GetComponentInParent<RandomPointNavMesh>();
+
         StartCoroutine(Movement());
     }
-    void Update()
+
+    private void Update()
     {
-        agent.destination = target.transform.position;
-        //print(agent.remainingDistance);
+        VisitorStop();
     }
 
-    void NextPoint()
+    private IEnumerator Movement()
+    {        
+        while (true)
+        {
+            Debug.DrawLine(agent.transform.position, agent.destination,Color.red);
+            if (agent.remainingDistance <= 0.01)
+            {
+                float waitingTime = Random.Range(5, 15);
+                yield return new WaitForSeconds(waitingTime);
+
+                if (!agent.pathPending && !isStopped)
+                {
+                    NextPoint();
+                }
+            }         
+            yield return null;
+        }              
+    }
+    private void NextPoint()
     {
-        print("NextTarget");
         nextTarget = true;
-        randomPointScript.ChangePointPos(nextTarget);
+        agent.SetDestination(randomPointScript.ChangePointPos(nextTarget));
         nextTarget = false;
     }
 
-    IEnumerator Movement()
+    private void VisitorStop()
     {
-        isMoving = true;
-
-        while (isMoving)
+        if (isStopped)
         {
-            if (agent.remainingDistance < 0.1)
-            {
-                //print("Agent pos: " + agent.transform.position);
-                //print("Target pos: " + target.transform.position);
-                Debug.LogError("Im Found!");
-                yield return new WaitForSeconds(5f);
-                NextPoint();
-            }
-            else Debug.Log("So Far");
-
-            yield return null;
+            print("Oh no" + name);
         }
     }
 
