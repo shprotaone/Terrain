@@ -11,46 +11,56 @@ public class SecurityController : MonoBehaviour
     private NavMeshAgent securityAgent; 
     
     private int index;
+    private int visitorsCount;
+
     private bool visitorStopped = false;
     private bool cheked = false;
 
-    private void Start()
-    {
+    private void Awake()
+    {        
         securityAgent = GetComponent<NavMeshAgent>();
-
+    }
+    private void Start()
+    {        
         visitors = new List<GameObject>();
         visitors.AddRange(GameObject.FindGameObjectsWithTag("Visitor"));
-
         NextTarget();
         StartCoroutine(CheckVisitor());
     }
     private void Update()
     {
         Debug.DrawLine(securityAgent.transform.position, visitors[index].transform.position);
-        print("Visitor Stopped " + visitorStopped);
     }
 
     private IEnumerator CheckVisitor()
     {
         while (true)
-        {           
-            if (securityAgent.remainingDistance < 0.8f)
+        {
+            bool checkNextTarget = securityAgent.remainingDistance < 0.83f;
+            print("Условия следующей цели " + checkNextTarget);
+
+            if (securityAgent.remainingDistance < 0.83f && securityAgent.pathPending)
             {
+                yield return new WaitForSeconds(5f);
                 NextTarget();                
             }
+            
             securityAgent.SetDestination(visitors[index].transform.position);
             
             yield return null;
         }
     }
+
     /// <summary>
     /// Генерация номера следующего моба
     /// </summary>
     /// <returns></returns>
     private int NextTarget()
     {
-        index = Random.Range(0, visitors.Count);
-        return index;
+        visitorsCount = visitors.Count;
+        index = Random.Range(0, visitorsCount);
+        cheked = true;
+        return index;       
     }
     /// <summary>
     /// Попытка остановить при касании
@@ -58,19 +68,16 @@ public class SecurityController : MonoBehaviour
     /// <param name="collision"></param>
     private void OnCollisionEnter(Collision collision)
     {
-        if (collision.collider && !cheked)
+        BotController botController;        
+        currentVisitor = collision.gameObject;
+       
+        if (currentVisitor != null && currentVisitor.name == visitors[index].name)  //2nd
         {
-            currentVisitor = collision.gameObject;
-            BotController botController;
-
-            if(currentVisitor != null)
-            {
-                print(collision.collider.name);
-                botController = currentVisitor.GetComponent<BotController>();
-                botController.Stopped = true;
-                cheked = true;                
-            }
+            print(collision.collider.name);
+            botController = currentVisitor.GetComponent<BotController>();
+            botController.Stopped = true;
+            cheked = true;
             visitors.RemoveAt(index);
-        }
+        }        
     }
 }

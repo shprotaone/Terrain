@@ -67,7 +67,9 @@ public class BotController  : MonoBehaviour
     {
         if (isStopped)
         {
-            print("Oh no" + name);
+            print("Oh no say: " + name);
+            agent.isStopped = true;
+            agent.ResetPath();
         }
     }
 
