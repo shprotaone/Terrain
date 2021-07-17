@@ -7,6 +7,7 @@ TagManager:
   - Item
   - Visitor
   - Zone
+  - VillageItems
   layers:
   - Default
   - TransparentFX
@@ -17,7 +18,7 @@ TagManager:
   - 
   - 
   - Postprocessing
-  - 
+  - NavMeshLayer
   - 
   - 
   - 

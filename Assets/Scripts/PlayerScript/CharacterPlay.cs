@@ -12,10 +12,10 @@ public class CharacterPlay : MonoBehaviour
     public GameObject inventoryContent; 
     public GameObject taskDesk;
 
-    int weapon;
-    GameObject currentItem;
+    private int weapon;
+    private GameObject currentItem;
 
-    void Update()
+    private void Update()
     {      
         ChangeWeapon();
         DisplayItem();
@@ -37,7 +37,7 @@ public class CharacterPlay : MonoBehaviour
     /// Берем предмет
     /// </summary>
     /// <param name="item"></param>
-    void TakeItem(Item item)
+    private void TakeItem(Item item)
     {
         if (item)
         {
@@ -50,7 +50,7 @@ public class CharacterPlay : MonoBehaviour
     /// <summary>
     /// Меняем оружие
     /// </summary>
-    void ChangeWeapon()
+    private void ChangeWeapon()
     {
 
             float currentWeapon = Input.GetAxis("Mouse ScrollWheel");
@@ -92,7 +92,7 @@ public class CharacterPlay : MonoBehaviour
     /// <summary>
     /// Отображение инвентаря
     /// </summary>
-    void DisplayItem()
+    private void DisplayItem()
     {
         for (int i = 0; i < items.Count; i++)
         {
@@ -110,7 +110,7 @@ public class CharacterPlay : MonoBehaviour
     /// <summary>
     /// Вызов доски заданий
     /// </summary>
-    void CallDesk()
+    private void CallDesk()
     {
         if (Input.GetKey(KeyCode.Tab))
         {

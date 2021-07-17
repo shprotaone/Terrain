@@ -8,7 +8,7 @@ public class DialogManager : MonoBehaviour
     public Text nameText;
     public Text dialogText;
 
-    Queue<string> sentences,names;
+    private Queue<string> sentences,names;
 
     void Start()
     {

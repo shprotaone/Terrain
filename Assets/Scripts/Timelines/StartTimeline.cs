@@ -9,13 +9,13 @@ public class StartTimeline : MonoBehaviour
     private PlayableDirector director;
     public GameObject message;
     // Start is called before the first frame update
-    void Start()
+    private void Start()
     {
         director = GetComponentInChildren<PlayableDirector>();
         message.SetActive(false);
     }
 
-    void OnTriggerStay(Collider other)
+    private void OnTriggerStay(Collider other)
     {
         if (other.gameObject.CompareTag("Player"))
         {

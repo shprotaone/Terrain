@@ -10,34 +10,34 @@ public class PlayerController : MonoBehaviour
     public float gravity = 9.8f;
     public float distanceRay;
 
-    float speed = 2.5f;    
-    float runSpeed = 6f;
-    [SerializeField]
-    float currentSpeed;
-    float turnSmoothVelocity;
-    float directionY;
+    private CharacterController controller;
 
-    bool jump, walk, run, standUp = false;
+    [SerializeField] private float currentSpeed;
+
+    private float speed = 2.5f;    
+    private float runSpeed = 6f;    
+    private float turnSmoothVelocity;
+    private float directionY;
+    private bool jump, walk, run, standUp = false;
+    
     public bool Jump { get { return jump; } }
     public bool Walk { get { return walk; } }
     public bool Run { get { return run; } }
     public bool StandUp { get { return standUp; } }
-
-    CharacterController controller;
-
-    void Start()
+    
+    private void Start()
     {
         controller = GetComponent<CharacterController>();
         currentSpeed = speed;    
     }
-    void Update()
+    private void Update()
     {
         Movement();
         JumpMeth();
         StandUpMeth();       
     }
   
-    void JumpMeth()
+    private void JumpMeth()
     {
         Vector3 jumpDirection = new Vector3(0, 0, 0);
 
@@ -53,7 +53,7 @@ public class PlayerController : MonoBehaviour
 
         controller.Move(jumpDirection * speed * Time.deltaTime);
     }
-    void Movement()
+    private void Movement()
     {
         float horizontal = Input.GetAxisRaw("Horizontal");
         float vertical = Input.GetAxisRaw("Vertical");
@@ -85,7 +85,7 @@ public class PlayerController : MonoBehaviour
             } else walk = false;
 
     }
-    void StandUpMeth()
+    private void StandUpMeth()
     {
         if (Input.GetKeyDown(KeyCode.E) && !standUp)
         {

@@ -5,16 +5,19 @@ using UnityEngine.AI;
 
 public class SecurityController : MonoBehaviour
 {
+    private const float waitTime = 10f;
+
     [SerializeField] private List<BotController> visitors;
     [SerializeField] private float distanceStop = 1f;
-    const float waitTime = 10f;     //уточнить, на том ли месте()
-
-    private NavMeshAgent securityAgent;    
+   
+    private NavMeshAgent securityAgent;
+    private Animator animator;
     private int index;
 
     private void Start()
     {
         securityAgent = GetComponent<NavMeshAgent>();
+        animator = GetComponent<Animator>();
 
         visitors = new List<BotController>();
         visitors.AddRange(FindObjectsOfType<BotController>());
@@ -32,17 +35,23 @@ public class SecurityController : MonoBehaviour
         while (true)
         {           
             if (securityAgent.remainingDistance < distanceStop && securityAgent.hasPath)
-            {
-                visitors[index].VisitorStop();
+            {               
+                visitors[index].VisitorStop(securityAgent.gameObject.transform);
                 securityAgent.ResetPath();
+
+                animator.SetBool("Idle", true);
+                animator.SetBool("Walking", false);
 
                 yield return new WaitForSeconds(waitTime);
 
-                visitors[index].NextPoint();
-                NextTarget();                
+                animator.SetBool("Idle", false);
+
+                NextTarget();
             }
-            securityAgent.SetDestination(visitors[index].transform.position);
-            
+
+            animator.SetBool("Walking", true);
+            securityAgent.SetDestination(visitors[index].transform.position);            
+
             yield return null;
         }
     }

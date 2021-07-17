@@ -8,9 +8,9 @@ public class Rooling : MonoBehaviour
     public GameObject player, playerParent;
     public GameObject cart;
 
-    PlayableDirector playable;   
-    Transform playerPosition;
-    Task task;
+    private PlayableDirector playable;   
+    private Transform playerPosition;
+    private Task task;
 
     void Start()
     {

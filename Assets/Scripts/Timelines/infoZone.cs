@@ -6,14 +6,14 @@ public class infoZone : MonoBehaviour
 {
     public GameObject message;
     public bool reactivate;
-    bool activated = false;
+    private bool activated = false;
 
-    void Start()
+    private void Start()
     {
         message.SetActive(false);
     }
 
-    void OnTriggerStay(Collider other)
+    private void OnTriggerStay(Collider other)
     {
         if (other.gameObject.CompareTag("Player")&&!activated)
         {
@@ -29,7 +29,7 @@ public class infoZone : MonoBehaviour
         message.SetActive(false);
     }
 
-    void Again()
+    private void Again()
     {
         if (reactivate)
         {

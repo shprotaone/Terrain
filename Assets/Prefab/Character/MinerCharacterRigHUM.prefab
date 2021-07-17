@@ -1359,11 +1359,11 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8133501155557786724}
+  - component: {fileID: 1000306207}
+  - component: {fileID: 900133534}
   - component: {fileID: 2738237921277353502}
   - component: {fileID: 4301664030091271308}
-  - component: {fileID: 1000306207}
   - component: {fileID: 269112808}
-  - component: {fileID: 900133534}
   - component: {fileID: 900133539}
   m_Layer: 0
   m_Name: MinerCharacterRigHUM
@@ -1389,6 +1389,38 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 180, z: 0}
+--- !u!143 &1000306207
+CharacterController:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8911445646182981342}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Height: 12.6
+  m_Radius: 1.74
+  m_SlopeLimit: 45
+  m_StepOffset: 0.3
+  m_SkinWidth: 0.1
+  m_MinMoveDistance: 0.001
+  m_Center: {x: 0, y: 6.7, z: 0}
+--- !u!136 &900133534
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8911445646182981342}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  m_Radius: 2.4004583
+  m_Height: 14.099999
+  m_Direction: 1
+  m_Center: {x: 0, y: 7.46, z: 0}
 --- !u!95 &2738237921277353502
 Animator:
   serializedVersion: 3
@@ -1429,24 +1461,6 @@ MonoBehaviour:
   itemInHand: {fileID: 7257389295492674531}
   inventoryContent: {fileID: 0}
   taskDesk: {fileID: 0}
---- !u!143 &1000306207
-CharacterController:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8911445646182981342}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Height: 12.6
-  m_Radius: 1.74
-  m_SlopeLimit: 45
-  m_StepOffset: 0.3
-  m_SkinWidth: 0.1
-  m_MinMoveDistance: 0.001
-  m_Center: {x: 0, y: 6.7, z: 0}
 --- !u!114 &269112808
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1465,20 +1479,6 @@ MonoBehaviour:
   gravity: 9.8
   distanceRay: 0
   currentSpeed: 0
---- !u!136 &900133534
-CapsuleCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8911445646182981342}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  m_Radius: 2.4004583
-  m_Height: 14.099999
-  m_Direction: 1
-  m_Center: {x: 0, y: 7.46, z: 0}
 --- !u!114 &900133539
 MonoBehaviour:
   m_ObjectHideFlags: 0

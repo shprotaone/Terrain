@@ -4,19 +4,19 @@ using UnityEngine;
 
 public class AnimationController : MonoBehaviour
 {
-    Animator animator;
-    PlayerController playerController;
+    private Animator animator;
+    private PlayerController playerController;
 
-    bool animReady;
+    private bool animReady;
 
-    void Start()
+    private void Start()
     {
         animator = GetComponent<Animator>();
         playerController = GetComponent<PlayerController>();
         playerController.enabled = false;
     }
 
-    void Update()
+    private void Update()
     {
         animReady = animator.GetCurrentAnimatorStateInfo(0).IsName("Idle");
         MovementAnim();
@@ -24,7 +24,7 @@ public class AnimationController : MonoBehaviour
         OtherAnimation();
     }
 
-    void MovementAnim()
+    private void MovementAnim()
     {
         if (playerController.Jump)
         {            
@@ -43,7 +43,7 @@ public class AnimationController : MonoBehaviour
         }
         else animator.SetBool("Running", false);
     }
-    void StandUpAnim()
+    private void StandUpAnim()
     {
         if (Input.GetKeyDown(KeyCode.E))
         {
@@ -55,7 +55,7 @@ public class AnimationController : MonoBehaviour
             playerController.enabled = true;
         }
     }
-    void OtherAnimation()
+    private void OtherAnimation()
     {
         if (Input.GetKeyDown(KeyCode.Alpha1) && animReady)
         {
