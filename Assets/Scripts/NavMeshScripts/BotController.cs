@@ -36,7 +36,7 @@ public class BotController  : MonoBehaviour
         animator = GetComponent<Animator>();
         StartCoroutine(Movement());
     }
-
+    #region Первая реализация
     private IEnumerator Movement()
     {
         
@@ -161,4 +161,5 @@ public class BotController  : MonoBehaviour
             animator.SetBool(idleNameStates, true);
         }
     }
+    #endregion
 }
