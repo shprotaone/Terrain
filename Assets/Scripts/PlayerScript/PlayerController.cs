@@ -12,8 +12,7 @@ public class PlayerController : MonoBehaviour
 
     private CharacterController controller;
 
-    [SerializeField] private float currentSpeed;
-
+    private float currentSpeed;
     private float speed = 2.5f;    
     private float runSpeed = 6f;    
     private float turnSmoothVelocity;
@@ -36,7 +35,39 @@ public class PlayerController : MonoBehaviour
         JumpMeth();
         StandUpMeth();       
     }
-  
+    private void Movement()
+    {
+        float horizontal = Input.GetAxisRaw("Horizontal");
+        float vertical = Input.GetAxisRaw("Vertical");
+
+        Vector3 direction = new Vector3(horizontal, 0f, vertical);
+
+        if (direction.magnitude >= 0.1)
+        {
+            walk = true;
+
+            float targetAngle = Mathf.Atan2(direction.x, direction.z) * Mathf.Rad2Deg + cam.eulerAngles.y;
+            float angle = Mathf.SmoothDampAngle(transform.eulerAngles.y, targetAngle, ref turnSmoothVelocity, turnSmoothTime);
+            transform.rotation = Quaternion.Euler(0f, angle, 0f);
+
+            Vector3 moveDir = Quaternion.Euler(0f, targetAngle, 0f) * Vector3.forward;
+            controller.Move(moveDir * currentSpeed * Time.deltaTime);
+
+            if (Input.GetKey(KeyCode.LeftShift) && walk)
+            {
+                currentSpeed = runSpeed;
+                run = true;
+            }
+            else
+            {
+                currentSpeed = speed;
+                run = false;
+            }
+
+        }
+        else walk = false;
+
+    }
     private void JumpMeth()
     {
         Vector3 jumpDirection = new Vector3(0, 0, 0);
@@ -52,39 +83,7 @@ public class PlayerController : MonoBehaviour
         jumpDirection.y = directionY;
 
         controller.Move(jumpDirection * speed * Time.deltaTime);
-    }
-    private void Movement()
-    {
-        float horizontal = Input.GetAxisRaw("Horizontal");
-        float vertical = Input.GetAxisRaw("Vertical");
-       
-        Vector3 direction = new Vector3(horizontal, 0f, vertical);
-      
-            if (direction.magnitude >= 0.1)
-            {
-                walk = true;
-
-                float targetAngle = Mathf.Atan2(direction.x, direction.z) * Mathf.Rad2Deg + cam.eulerAngles.y;
-                float angle = Mathf.SmoothDampAngle(transform.eulerAngles.y, targetAngle, ref turnSmoothVelocity, turnSmoothTime);
-                transform.rotation = Quaternion.Euler(0f, angle, 0f);
-
-                Vector3 moveDir = Quaternion.Euler(0f, targetAngle, 0f) * Vector3.forward;
-                controller.Move(moveDir * currentSpeed * Time.deltaTime);
-
-                if (Input.GetKey(KeyCode.LeftShift) && walk)
-                {
-                    currentSpeed = runSpeed;
-                    run = true;                
-                }
-                else
-                {
-                    currentSpeed = speed;
-                    run = false;                
-                }
-
-            } else walk = false;
-
-    }
+    }  
     private void StandUpMeth()
     {
         if (Input.GetKeyDown(KeyCode.E) && !standUp)

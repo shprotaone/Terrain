@@ -14,8 +14,10 @@ public class BotController  : MonoBehaviour
     [SerializeField] private GameObject target;
     [SerializeField] private bool isStopped = false;
     [SerializeField] private bool isDanced = false;
+    [SerializeField] private bool inMove = false;
     [SerializeField] private NavMeshModifierVolume navMeshVolume;
     [SerializeField] private Transform hand;
+    [SerializeField] private GameObject itemInHand;
 
     private NavMeshAgent agent;    
     private RandomPointNavMesh randomPointScript;
@@ -36,12 +38,13 @@ public class BotController  : MonoBehaviour
     }
 
     private IEnumerator Movement()
-    {        
-        while (!isStopped)
-        {
-            
+    {
+        
+        //isStopped = true;
+        while (true)
+        {            
             Debug.DrawLine(agent.transform.position, agent.destination,Color.red);
-            
+
             if (agent.remainingDistance <= remainingDistance)
             {
                 float waitingTime = Random.Range(10, 20);
@@ -53,7 +56,6 @@ public class BotController  : MonoBehaviour
                 if (!agent.pathPending && isStopped)
                 {
                     NextPoint();
-                    isStopped = false;
                 }               
             }         
             yield return null;
@@ -64,34 +66,37 @@ public class BotController  : MonoBehaviour
     /// </summary>
     public void NextPoint()
     {
-        StopAnimation();        //задать вопрос
-
         nextTarget = true;
+        isDanced = false;
+        isStopped = false;
+        inMove = true;
         agent.SetDestination(randomPointScript.ChangePointPos(nextTarget));
+
+        animator.SetBool(dancingNameStates, false);
         animator.SetBool(walkingNameStates, true);
+        
         nextTarget = false;
     }
     /// <summary>
     /// Остановка
     /// </summary>
     public void VisitorStop(Transform target)
-    {
-        //StopAnimation();
-        animator.SetBool(dancingNameStates, false);
-        animator.SetBool(idleNameStates, true);
-
+    {  
         this.transform.LookAt(target);
         isStopped = true;
         isDanced = false;
 
-        agent.ResetPath();
-        
+        animator.SetBool(dancingNameStates, false);
+        animator.SetBool(walkingNameStates, false);
+        animator.SetBool(idleNameStates, true);
+
+        agent.ResetPath();        
     }
     /// <summary>
     /// Взять бутылку если находишься в определнной зоне
     /// </summary>
     public void TakeABottle()
-    {   
+    {
         if (isStopped == true && !haveABottle)
         {
             nearestObj = GetComponent<NearestObj>();
@@ -103,33 +108,37 @@ public class BotController  : MonoBehaviour
             animator.SetBool(walkingNameStates, true);
 
             if (agent.remainingDistance <= pickDistance)
-            {              
+            {
                 bottle.transform.SetParent(hand.transform);
                 bottle.transform.position = hand.transform.position;
+                bottle.transform.rotation = hand.transform.rotation;
 
+                itemInHand = bottle;
                 agent.ResetPath();
-                isStopped = false;
+                isStopped = true;
                 animator.SetBool(walkingNameStates, false);
-                Invoke("NextPoint",5);                
+                Invoke("NextPoint", 5);
                 haveABottle = true;
             }
-
-            if (drinkingBottle)
+            else
             {
-                Destroy(bottle);
+                animator.SetBool(idleNameStates, true);
             }
-        }       
+        }
     }
     /// <summary>
     /// Начать пить, если есть бутылка
     /// </summary>
     public void Drinking()
     { 
-        if (haveABottle && Random.value < 0.35)
+        if (haveABottle && Random.value < 0.35&& isStopped)
         {
-            animator.SetTrigger(drinkingNameStates);
-            print("I,m Drink!");
+            animator.SetBool(drinkingNameStates, false);
+            Destroy(itemInHand, animator.GetCurrentAnimatorStateInfo(0).length);
         }
+
+        NextPoint();
+
     }
     /// <summary>
     /// Начать танцевать, если находишься в определенной зоне. 
@@ -137,27 +146,19 @@ public class BotController  : MonoBehaviour
     public void DanceStarted()
     {
         float chance = Random.value;
-        print("isDanced " + isDanced);
+        isDanced = true;
 
-        if (chance > 0.35 && !isDanced)
+        if (isDanced && isStopped)
         {
-            if (isStopped)
+            if (Random.value > 0.35)
             {
-                isDanced = true;
-                animator.SetBool(dancingNameStates,true);                  
-            }
-            else
-            {
-                isDanced = false;
-                animator.SetBool(dancingNameStates, false);
-            }
-        }        
+                animator.SetBool(dancingNameStates, true);
+            }           
+        }
+        else
+        {
+            animator.SetBool(dancingNameStates, false);
+            animator.SetBool(idleNameStates, true);
+        }
     }
-    private void StopAnimation()
-    {
-        animator.SetBool(dancingNameStates, false);
-        animator.SetBool(walkingNameStates, false);
-        animator.SetBool(idleNameStates, true);
-    }
-
 }

@@ -47,6 +47,7 @@ public class SecurityController : MonoBehaviour
                 animator.SetBool("Idle", false);
 
                 NextTarget();
+                visitors[index].NextPoint();
             }
 
             animator.SetBool("Walking", true);

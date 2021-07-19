@@ -6,32 +6,41 @@ using UnityEngine.AI;
 public class ReadArea : MonoBehaviour
 {
     private string zoneName;
-    public string ZoneName { get; set; }
+
+    public string ZoneName
+    {
+        get { return zoneName; }
+        set { zoneName = ZoneName; }
+    }
 
     private void Start()
     {
         zoneName = gameObject.name;
     }
-    private void OnTriggerStay(Collider other)
-    {
-        print(zoneName);
 
+    private void OnTriggerEnter(Collider other)
+    {
         if (other.CompareTag("Visitor"))
         {
-
-            if (zoneName == "BarNav")
-            {
-               other.GetComponent<BotController>().TakeABottle();
-            }
-            else if (zoneName == "DanceNav")
+            if(zoneName == "DanceNav")
             {
                 other.GetComponent<BotController>().DanceStarted();
-            }
-            else if (zoneName == "LaungeNav")
+            }else if(zoneName == "LaungeNav")
             {
                 other.GetComponent<BotController>().Drinking();
             }
-            else print(other.name + " In the otherZone");
+        }
+    }
+    private void OnTriggerStay(Collider other)
+    {
+        if (other.CompareTag("Visitor"))
+        {
+            if (zoneName == "BarNav")
+            {
+                other.GetComponent<BotController>().TakeABottle();         
+            }           
         }
     }   
+
+
 }

@@ -15,7 +15,7 @@ public class RandomPointNavMesh : MonoBehaviour
 
         if (NavMesh.SamplePosition(randomPoint, out hit, 17.0f, NavMesh.AllAreas))
         {            
-            result = hit.position;
+            result = hit.position;           
             return true;
         }
         
