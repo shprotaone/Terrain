@@ -10,72 +10,95 @@ public class BotController  : MonoBehaviour
     private const string idleNameStates = "Idle";
     private const string drinkingNameStates = "Drinking";
     private const string dancingNameStates = "Dancing";
-
-    [SerializeField] private GameObject target;
+ 
     [SerializeField] private bool isStopped = false;
-    [SerializeField] private bool isDanced = false;
-    [SerializeField] private bool inMove = false;
     [SerializeField] private NavMeshModifierVolume navMeshVolume;
     [SerializeField] private Transform hand;
     [SerializeField] private GameObject itemInHand;
+    [SerializeField] private GameObject target;
 
     private NavMeshAgent agent;    
     private RandomPointNavMesh randomPointScript;
     private NearestObj nearestObj;
     private Animator animator;
-
-    private float pickDistance = 0.2f;          //дистанция для взятия бутылки.
+    private Rigidbody rigid;
+    
+    private float waitingTime;
     private bool nextTarget = false;
-    private bool haveABottle;
-    private bool drinkingBottle = false;
+    private bool startDrink = false;
+    private bool startDance = false;
+    private bool takeABottle = false;
+    private bool haveABottle = false;
+    private string currentArea;
+
+    public GameObject destination;
+
+    #region Properties
+    public string Zone
+    {
+        get { return currentArea; }
+        set { currentArea = value; }
+    }
+    #endregion
 
     private void Start()
     {
         agent = GetComponent<NavMeshAgent>();
         randomPointScript = target.GetComponentInParent<RandomPointNavMesh>();
         animator = GetComponent<Animator>();
+        rigid = GetComponent<Rigidbody>();
+        StopAllCoroutines();
         StartCoroutine(Movement());
     }
 
     private IEnumerator Movement()
-    {
-        
-        //isStopped = true;
+    {   
         while (true)
         {            
-            Debug.DrawLine(agent.transform.position, agent.destination,Color.red);
-
             if (agent.remainingDistance <= remainingDistance)
             {
-                float waitingTime = Random.Range(10, 20);
-                isStopped = true;
+                
+                waitingTime = Random.Range(5,20);
+                //isStopped = true;
                 animator.SetBool(walkingNameStates, false);
 
+                yield return new WaitForSeconds(2);               
+                isStoppedMeth();
+                ReadArea();
+
+                if (startDance) yield return StartCoroutine(DanceStarted());
+                if (startDrink) yield return StartCoroutine(Drinking());
+                if (takeABottle) yield return StartCoroutine(TakeABottle());
+
                 yield return new WaitForSeconds(waitingTime);
+                yield return StartCoroutine(NextPoint());
                 
-                if (!agent.pathPending && isStopped)
-                {
-                    NextPoint();
-                }               
-            }         
+                yield return null;               
+            }
+
+            #region Debug
+            Debug.DrawLine(agent.transform.position, agent.destination, Color.red);
+            #endregion
+            
+            
             yield return null;
         }              
     }
     /// <summary>
     /// Следующая точка и возобновление движения
     /// </summary>
-    public void NextPoint()
+    public IEnumerator NextPoint()
     {
         nextTarget = true;
-        isDanced = false;
-        isStopped = false;
-        inMove = true;
-        agent.SetDestination(randomPointScript.ChangePointPos(nextTarget));
+        destination.transform.position = randomPointScript.ChangePointPos(nextTarget);
+        agent.SetDestination(destination.transform.position);
 
         animator.SetBool(dancingNameStates, false);
         animator.SetBool(walkingNameStates, true);
         
         nextTarget = false;
+
+        yield return null;
     }
     /// <summary>
     /// Остановка
@@ -83,82 +106,120 @@ public class BotController  : MonoBehaviour
     public void VisitorStop(Transform target)
     {  
         this.transform.LookAt(target);
-        isStopped = true;
-        isDanced = false;
 
         animator.SetBool(dancingNameStates, false);
         animator.SetBool(walkingNameStates, false);
         animator.SetBool(idleNameStates, true);
-
+        
         agent.ResetPath();        
     }
     /// <summary>
     /// Взять бутылку если находишься в определнной зоне
     /// </summary>
-    public void TakeABottle()
+    public IEnumerator TakeABottle()
     {
-        if (isStopped == true && !haveABottle)
+        Vector3 defaultPos = new Vector3(0.15f, 0.03f, 0.03f);
+        Vector3 defaultRotation = new Vector3(-10.5f, -80f, -39.2f);
+
+        if (isStopped && !haveABottle)
         {
             nearestObj = GetComponent<NearestObj>();
             GameObject bottle = nearestObj.FindClosestObject();
 
             print("Im go to bottle");
-
-            agent.SetDestination(bottle.transform.position);
-            animator.SetBool(walkingNameStates, true);
-
-            if (agent.remainingDistance <= pickDistance)
+            agent.ResetPath();
+            if (agent.remainingDistance <= 0.2f)
             {
+                animator.SetBool(walkingNameStates, false);
+
                 bottle.transform.SetParent(hand.transform);
-                bottle.transform.position = hand.transform.position;
-                bottle.transform.rotation = hand.transform.rotation;
+                bottle.transform.localPosition = defaultPos;
+                bottle.transform.localEulerAngles = defaultRotation;
 
                 itemInHand = bottle;
-                agent.ResetPath();
-                isStopped = true;
-                animator.SetBool(walkingNameStates, false);
-                Invoke("NextPoint", 5);
                 haveABottle = true;
+
+                yield return null;
             }
-            else
-            {
-                animator.SetBool(idleNameStates, true);
-            }
+                  
         }
     }
     /// <summary>
     /// Начать пить, если есть бутылка
     /// </summary>
-    public void Drinking()
-    { 
-        if (haveABottle && Random.value < 0.35&& isStopped)
+    public IEnumerator Drinking()
+    {
+        if (haveABottle && isStopped)
         {
+            float waitForDrinking = 7;
+            animator.SetBool(drinkingNameStates, true);
+            yield return new WaitForSeconds(waitForDrinking);
             animator.SetBool(drinkingNameStates, false);
-            Destroy(itemInHand, animator.GetCurrentAnimatorStateInfo(0).length);
+            animator.SetBool(idleNameStates, true);
+            
+            itemInHand.SetActive(false);
+            haveABottle = false;
         }
-
-        NextPoint();
-
+        yield return null;
     }
     /// <summary>
     /// Начать танцевать, если находишься в определенной зоне. 
     /// </summary>
-    public void DanceStarted()
-    {
+    public IEnumerator DanceStarted()
+    {   
         float chance = Random.value;
-        isDanced = true;
+        float lenght = 7;
 
-        if (isDanced && isStopped)
+        animator.SetBool(dancingNameStates, true);
+
+        yield return new WaitForSeconds(lenght);
+
+        animator.SetBool(dancingNameStates, false);
+        startDance = false;
+
+        yield return null;
+    }
+    /// <summary>
+    /// Передает информацию о текущей зоне
+    /// </summary>
+    public void ReadArea()
+    {
+        print(Zone);
+        if (isStopped)
         {
-            if (Random.value > 0.35)
+            switch (Zone)
             {
-                animator.SetBool(dancingNameStates, true);
-            }           
+                case "DanceNav":
+                    startDance = true;
+                    break;
+                case "LaungeNav":
+                    startDrink = true;
+                    break;
+                case "BarNav":
+                    takeABottle = true;
+                    break;
+
+                default:
+                    print("Walkble");
+                    startDance = false;
+                    startDrink = false;
+                    takeABottle = false;
+                    break;
+            }
+        }
+    }
+
+    public void isStoppedMeth()
+    {
+        print(isStopped);
+
+        if (rigid.IsSleeping())
+        {
+            isStopped = true;
         }
         else
         {
-            animator.SetBool(dancingNameStates, false);
-            animator.SetBool(idleNameStates, true);
+            isStopped = false;
         }
     }
 }

@@ -6,7 +6,6 @@ using UnityEngine.AI;
 public class RandomPointNavMesh : MonoBehaviour
 {
     public float range = 10.0f;
-    public GameObject target;
 
     private bool RandomPoint(Vector3 center, float range, out Vector3 result)
     {

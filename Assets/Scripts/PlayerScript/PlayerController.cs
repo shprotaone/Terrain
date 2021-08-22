@@ -33,7 +33,8 @@ public class PlayerController : MonoBehaviour
     {
         Movement();
         JumpMeth();
-        StandUpMeth();       
+        StandUpMeth();
+        print(controller.velocity);
     }
     private void Movement()
     {
@@ -72,8 +73,9 @@ public class PlayerController : MonoBehaviour
     {
         Vector3 jumpDirection = new Vector3(0, 0, 0);
 
-        if (Input.GetKeyDown(KeyCode.Space)&&controller.isGrounded)
+        if (Input.GetKeyDown(KeyCode.Space) && controller.velocity.y == Vector3.zero.y)
         {
+            
             directionY = jumpSpeed;
             jump = true;
         }
