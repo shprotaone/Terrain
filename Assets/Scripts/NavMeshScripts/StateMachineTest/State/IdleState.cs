@@ -1,10 +1,14 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
+
 namespace SecondBranch
 {
     public class IdleState : State
     {
+        private bool danced;
+
         public IdleState(BotControllerV2 bot, StateMachine stateMachine) : base(bot, stateMachine)
         {
 
@@ -13,14 +17,41 @@ namespace SecondBranch
         public override void Enter()
         {
             base.Enter();
-            bot.SetAnimationBool(bot.idleParam, true);
-            bot.Stop();
+            bot.Wait = false;                       
+        }
+
+        public override void LogicUpdate()
+        {
+            base.LogicUpdate();
+            bot.Timer();
+            if(bot.Zone == "DanceNav" && !danced)
+            {
+                bot.Dancing = true;
+                danced = true;
+                stateMachine.ChangeState(bot.dancingState);
+            }
+            else if (bot.Wait)
+            {
+                stateMachine.ChangeState(bot.walkingState);
+                danced = false;
+            }
+            
         }
 
         public override void Exit()
-        {
+        {            
             base.Exit();
-            bot.SetAnimationBool(bot.idleParam, false);
+            bot.ResetMoveParams();
+            if (!bot.Dancing)
+            {
+                bot.SetDestiny();
+            }                     
+        }
+
+        public override string OutputName()
+        {
+            base.OutputName();
+            return "Idle";
         }
     }
 }

@@ -610,10 +610,9 @@ GameObject:
   - component: {fileID: 2619864284182421285}
   - component: {fileID: 6637187004007076403}
   - component: {fileID: 8227743926343444172}
-  - component: {fileID: 919132147520241951}
-  - component: {fileID: 8027301821885537567}
   - component: {fileID: 2580872453514019977}
   - component: {fileID: 2580872453514019972}
+  - component: {fileID: 469446641}
   m_Layer: 0
   m_Name: VisitorManVer1
   m_TagString: Visitor
@@ -647,7 +646,7 @@ Animator:
   m_GameObject: {fileID: 3391333677745915295}
   m_Enabled: 1
   m_Avatar: {fileID: 9000000, guid: 8f648156b309f7f498c0a88e75a16db8, type: 3}
-  m_Controller: {fileID: 9100000, guid: 00149fd0ee0e8e44087b9b24ec9747d1, type: 2}
+  m_Controller: {fileID: 9100000, guid: e37976460b268a544ad5cd98af3335b6, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
@@ -678,39 +677,6 @@ NavMeshAgent:
   m_BaseOffset: 1
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
---- !u!114 &919132147520241951
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3391333677745915295}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4ede948e77ef98e4fade51eeb447412a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  target: {fileID: 0}
-  isStopped: 0
-  isDanced: 0
-  inMove: 0
-  navMeshVolume: {fileID: 0}
-  hand: {fileID: 1839621000}
-  itemInHand: {fileID: 0}
---- !u!114 &8027301821885537567
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3391333677745915295}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 64bcf985832c9084da2d38cc581ef2cc, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  objectTag: VillageItems
-  nearest: 
 --- !u!54 &2580872453514019977
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -741,6 +707,19 @@ CapsuleCollider:
   m_Height: 4.835202
   m_Direction: 1
   m_Center: {x: 0.0048717814, y: 0, z: 0}
+--- !u!114 &469446641
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3391333677745915295}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 97060749aa4281b44b2cf7d69ac892a6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  target: {fileID: 0}
 --- !u!1 &3550077395717525283
 GameObject:
   m_ObjectHideFlags: 0

@@ -3,10 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 namespace SecondBranch
 {
-    public class WalkingState : IdleState
+    public class WalkingState : State
     {
-        private bool walking;
-
         public WalkingState (BotControllerV2 bot, StateMachine stateMachine): base(bot, stateMachine)
         {
 
@@ -15,18 +13,28 @@ namespace SecondBranch
         public override void Enter()
         {
             base.Enter();
-            bot.Move();
+            bot.IsStopped = false;
         }
         public override void LogicUpdate()
-        {
-            base.LogicUpdate();
+        {                
+            bot.Move();
             bot.CheckDistance();
+            if (bot.Finished)
+            {
+                stateMachine.ChangeState(bot.idleState);
+            }            
         }
 
         public override void Exit()
         {
-            base.Exit();
-            bot.Stop();
+            bot.IsStopped = true;
+            bot.Finished = false;
+            bot.ResetMoveParams();
+        }
+
+        public override string OutputName()
+        {
+            return "Walking";
         }
     }
 }

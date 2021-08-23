@@ -13,11 +13,17 @@ namespace SecondBranch
             this.bot = bot;
             this.stateMachine = stateMachine;
         }
-
+        /// <summary>
+        /// Вход в состояние
+        /// </summary>
         public virtual void Enter()
         {
 
         }
+        #region UpdateLoop
+        /// <summary>
+        /// Ввод
+        /// </summary>
         public virtual void Input()
         {
 
@@ -26,9 +32,18 @@ namespace SecondBranch
         {
 
         }
+        #endregion
+        /// <summary>
+        /// Выход из состояния
+        /// </summary>
         public virtual void Exit()
         {
 
+        }
+
+        public virtual string OutputName()
+        {
+            return " ";
         }
     }
 }

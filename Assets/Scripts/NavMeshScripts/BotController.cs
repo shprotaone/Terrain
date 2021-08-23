@@ -14,7 +14,6 @@ public class BotController  : MonoBehaviour
     [SerializeField] private GameObject target;
     [SerializeField] private bool isStopped = false;
     [SerializeField] private bool isDanced = false;
-    [SerializeField] private bool inMove = false;
     [SerializeField] private NavMeshModifierVolume navMeshVolume;
     [SerializeField] private Transform hand;
     [SerializeField] private GameObject itemInHand;
@@ -27,7 +26,6 @@ public class BotController  : MonoBehaviour
     private float pickDistance = 0.2f;          //дистанция для взятия бутылки.
     private bool nextTarget = false;
     private bool haveABottle;
-    private bool drinkingBottle = false;
 
     private void Start()
     {
@@ -69,7 +67,6 @@ public class BotController  : MonoBehaviour
         nextTarget = true;
         isDanced = false;
         isStopped = false;
-        inMove = true;
         agent.SetDestination(randomPointScript.ChangePointPos(nextTarget));
 
         animator.SetBool(dancingNameStates, false);

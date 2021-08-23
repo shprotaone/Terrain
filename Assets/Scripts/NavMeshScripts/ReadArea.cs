@@ -1,46 +1,18 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.AI;
 
-public class ReadArea : MonoBehaviour
+namespace SecondBranch
 {
-    private string zoneName;
-
-    public string ZoneName
+    public class ReadArea : MonoBehaviour
     {
-        get { return zoneName; }
-        set { zoneName = ZoneName; }
-    }
-
-    private void Start()
-    {
-        zoneName = gameObject.name;
-    }
-
-    private void OnTriggerEnter(Collider other)
-    {
-        if (other.CompareTag("Visitor"))
+        private void OnTriggerStay(Collider other)
         {
-            if(zoneName == "DanceNav")
+            if (other.CompareTag("Visitor"))
             {
-                other.GetComponent<BotController>().DanceStarted();
-            }else if(zoneName == "LaungeNav")
-            {
-                other.GetComponent<BotController>().Drinking();
+                other.GetComponent<BotControllerV2>().Zone = gameObject.name;
             }
         }
     }
-    private void OnTriggerStay(Collider other)
-    {
-        if (other.CompareTag("Visitor"))
-        {
-            if (zoneName == "BarNav")
-            {
-                other.GetComponent<BotController>().TakeABottle();         
-            }           
-        }
-    }   
-
-
 }
+
