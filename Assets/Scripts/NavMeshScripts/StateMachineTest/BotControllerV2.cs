@@ -22,12 +22,16 @@ namespace SecondBranch
         private int dancingAnim = Animator.StringToHash("Dancing");
         private int drinking = Animator.StringToHash("Drinking");
         private float forTimer;
+        private bool haveABottle;
 
         [SerializeField] private GameObject target;
+        [SerializeField] private Transform hand;
+        [SerializeField] private GameObject itemInHand;
 
         private NavMeshAgent agent;
         private RandomPointNavMesh randomPoint;
         private Animator animator;
+        private NearestObj nearestObj;
 
         public bool IsStopped { get; set; }
         public bool Finished { get; set; }
@@ -55,6 +59,7 @@ namespace SecondBranch
             movementSM.CurrentState.Input();            //обновление текущего состояния
             movementSM.CurrentState.LogicUpdate();
             nameState.text = movementSM.CurrentState.OutputName();
+            CheckDistance();
         }
 
         public void Move()
@@ -121,7 +126,19 @@ namespace SecondBranch
         }
         public void TakeABottle()
         {
+            Vector3 defaultPos = new Vector3(0.15f, 0.03f, 0.03f);
+            Vector3 defaultRotation = new Vector3(-10.5f, -80f, -39.2f);
 
+            nearestObj = GetComponent<NearestObj>();
+            GameObject bottle = nearestObj.FindClosestObject();
+
+            print("Im go to bottle");
+
+            bottle.transform.SetParent(hand.transform);
+            bottle.transform.localPosition = defaultPos;
+            bottle.transform.localEulerAngles = defaultRotation;
+
+            itemInHand = bottle;                               
         }
     }
 }
