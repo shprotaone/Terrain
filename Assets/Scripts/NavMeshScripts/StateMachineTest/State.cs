@@ -22,12 +22,8 @@ namespace SecondBranch
         }
         #region UpdateLoop
         /// <summary>
-        /// Ввод
+        /// Update
         /// </summary>
-        public virtual void Input()
-        {
-
-        }
         public virtual void LogicUpdate()
         {
 
@@ -40,7 +36,10 @@ namespace SecondBranch
         {
 
         }
-
+        /// <summary>
+        /// Вывод именя для Дебага
+        /// </summary>
+        /// <returns></returns>
         public virtual string OutputName()
         {
             return " ";

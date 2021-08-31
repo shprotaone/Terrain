@@ -7,8 +7,7 @@ namespace SecondBranch
 {
     public class IdleState : State
     {
-        private bool danced;
-        private bool haveABottle;
+        private bool canWalk;
 
         public IdleState(BotControllerV2 bot, StateMachine stateMachine) : base(bot, stateMachine)
         {
@@ -18,46 +17,52 @@ namespace SecondBranch
         public override void Enter()
         {
             base.Enter();
-            bot.Wait = false;                       
+            bot.Wait = false;
+            canWalk = true;
         }
 
         public override void LogicUpdate()
         {
             base.LogicUpdate();
-            bot.Timer();
-            if(bot.Zone == "DanceNav" && !danced)
+            bot.Timer(5);
+            if(bot.Zone == "DanceNav" && !bot.Danced)
             {
                 bot.Dancing = true;
-                danced = true;
+                canWalk = false;
                 stateMachine.ChangeState(bot.dancingState);
             }
-            else if (bot.Zone == "BarNav" && !haveABottle)
+            else if (bot.Zone == "BarNav" && !bot.HaveABottle)
             {
-                bot.TakeABottle();
-                haveABottle = true;
+                bot.TakeABottle();                    
+            }
+            else if(bot.Zone == "LaungeNav" && bot.HaveABottle)
+            {                
+                canWalk = false;              
+                bot.HaveABottle = false;
+                stateMachine.ChangeState(bot.drinkingState);
             }
             else if (bot.Wait)
-            {
+            {                
+                canWalk = true;
                 stateMachine.ChangeState(bot.walkingState);
-                danced = false;
-            }
-            
+            }           
         }
-
         public override void Exit()
         {            
             base.Exit();
             bot.ResetMoveParams();
-            if (!bot.Dancing)
+
+            if (canWalk && !bot.SecurityCheck)
             {
                 bot.SetDestiny();
-            }                     
+                bot.Danced = false;
+            }
         }
-
         public override string OutputName()
         {
             base.OutputName();
             return "Idle";
+
         }
     }
 }

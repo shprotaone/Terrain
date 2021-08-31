@@ -20,30 +20,35 @@ namespace SecondBranch
         private int horizontalMove = Animator.StringToHash("Horizontal");
         private int vertical = Animator.StringToHash("Vertical");
         private int dancingAnim = Animator.StringToHash("Dancing");
-        private int drinking = Animator.StringToHash("Drinking");
+        private int drinkingAnim = Animator.StringToHash("Drinking");
         private float forTimer;
-        private bool haveABottle;
 
-        [SerializeField] private GameObject target;
+        [SerializeField] private GameObject randomSystem;
         [SerializeField] private Transform hand;
         [SerializeField] private GameObject itemInHand;
+        [SerializeField] private Transform destination;
 
         private NavMeshAgent agent;
         private RandomPointNavMesh randomPoint;
         private Animator animator;
         private NearestObj nearestObj;
 
+        #region Properties
         public bool IsStopped { get; set; }
+        public bool SecurityCheck { get; set; }
         public bool Finished { get; set; }
         public bool Wait { get; set; }
         public bool Dancing { get; set; }
+        public bool HaveABottle { get; set; }
+        public bool Danced { get; set; }
         public string Zone { get; set; }
+        #endregion
 
         private void Start()
         {
             agent = GetComponent<NavMeshAgent>();
             animator = GetComponent<Animator>();
-            randomPoint = target.GetComponent<RandomPointNavMesh>();
+            randomPoint = randomSystem.GetComponent<RandomPointNavMesh>();
 
             movementSM = new StateMachine();
             idleState = new IdleState(this,movementSM);
@@ -55,30 +60,25 @@ namespace SecondBranch
         }
 
         private void Update()
-        {
-            movementSM.CurrentState.Input();            //обновление текущего состояния
+        {         
             movementSM.CurrentState.LogicUpdate();
             nameState.text = movementSM.CurrentState.OutputName();
             CheckDistance();
         }
-
+        /// <summary>
+        /// Метод для обновления анимации перемещения
+        /// </summary>
         public void Move()
-        {           
-            if (agent.remainingDistance <= 0.1)
-            {
-                //animator.SetFloat(horizontalMove, agent.velocity.x);
-                Finished = true;
-            }
-            
-            animator.SetFloat(vertical, agent.velocity.magnitude);
-            target.transform.position = agent.steeringTarget;
-            print(agent.isStopped);
-        }
-        public void Stop()
         {
-            agent.isStopped = true;
-            print("I,m Stay man");
+            if (agent.remainingDistance <= 0.1)
+            {               
+                Finished = true;
+            }          
+            animator.SetFloat(vertical, agent.velocity.magnitude);     
         }
+        /// <summary>
+        /// Отрисовка пути для дебага
+        /// </summary>
         public void CheckDistance()
         {
             Debug.DrawLine(agent.transform.position, agent.destination, Color.red);
@@ -88,17 +88,18 @@ namespace SecondBranch
         /// </summary>
         public void ResetMoveParams()
         {
-            animator.SetFloat(horizontalMove, 0);
             animator.SetFloat(vertical, 0);
+            animator.SetFloat(horizontalMove, 0);
         }
         /// <summary>
-        /// Таймер для ожидания
-        /// </summary>
-        public void Timer()
+/// Время ожидания
+/// </summary>
+/// <param name="timeToWait">время, которое нужно ждать</param>
+        public void Timer(float timeToWait)
         {
             forTimer += Time.deltaTime;
 
-            if (5 <= forTimer)
+            if (timeToWait <= forTimer)
             {
                 Wait = true;
                 forTimer = 0;
@@ -109,21 +110,29 @@ namespace SecondBranch
         /// </summary>
         public void SetDestiny()
         {
-            agent.SetDestination(randomPoint.ChangePointPos(true));
+            destination.transform.position = randomPoint.ChangePointPos(true);
+            agent.SetDestination(destination.transform.position);
             print("Next");
         }
         /// <summary>
-        /// Метод для танца
+        /// проигрывание анимации для танца
         /// </summary>
         /// <param name="value"></param>
         public void StartDance(bool value)
         {         
            animator.SetBool(dancingAnim, value);               
         }
-        public void Drinking()
+        /// <summary>
+        /// Проигрывание анимации питья
+        /// </summary>
+        /// <param name="value"></param>
+        public void Drinking(bool value)
         {
-
+            animator.SetBool(drinkingAnim, value);
         }
+        /// <summary>
+        /// Взять бутылку
+        /// </summary>
         public void TakeABottle()
         {
             Vector3 defaultPos = new Vector3(0.15f, 0.03f, 0.03f);
@@ -138,7 +147,44 @@ namespace SecondBranch
             bottle.transform.localPosition = defaultPos;
             bottle.transform.localEulerAngles = defaultRotation;
 
-            itemInHand = bottle;                               
+            itemInHand = bottle;
+            HaveABottle = true;
+        }
+        /// <summary>
+        /// Выключение бутылки после использования
+        /// </summary>
+        public void DestroyBottle()
+        {
+            itemInHand.SetActive(false);
+        }
+        /// <summary>
+        /// Выдает время текущей анимации
+        /// </summary>
+        /// <param name="nameOfClip">Имя анимации</param>
+        /// <returns></returns>
+        public float AnimationLenght(string nameOfClip)
+        {
+            AnimationClip[] clips = animator.runtimeAnimatorController.animationClips;
+            float time = 0;
+            foreach (AnimationClip clip in clips)
+            {
+                if (clip.name == nameOfClip)
+                {
+                    time = clip.length;                    
+                }
+            }
+            return time;            
+        }
+        /// <summary>
+        /// Остановка охранником
+        /// </summary>
+        /// <param name="transform"></param>
+        public void SecurityStop(Transform transform)
+        {
+            this.transform.LookAt(transform);
+            agent.ResetPath();
+            SecurityCheck = true;
+            movementSM.ChangeState(idleState);            
         }
     }
 }

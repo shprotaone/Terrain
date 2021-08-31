@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 
+/// <summary>
+/// Ищет ближайший к игроку объект заданного тэга
+/// </summary>
 public class NearestObj : MonoBehaviour
 {
     [TagSelector]

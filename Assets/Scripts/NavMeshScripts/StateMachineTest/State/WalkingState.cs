@@ -18,20 +18,17 @@ namespace SecondBranch
         public override void LogicUpdate()
         {                
             bot.Move();
-            bot.CheckDistance();
             if (bot.Finished)
             {
                 stateMachine.ChangeState(bot.idleState);
             }            
         }
-
         public override void Exit()
         {
             bot.IsStopped = true;
             bot.Finished = false;
             bot.ResetMoveParams();
         }
-
         public override string OutputName()
         {
             return "Walking";
